@@ -164,8 +164,8 @@ class ProfileDetailView(DetailView):
             self.request, qs, settings.POSTS_PER_PAGE
         )
         context['is_owner'] = (
-            self.request.user.is_authenticated and
-            self.request.user == profile_user
+            self.request.user.is_authenticated
+            and self.request.user == profile_user
         )
         return context
 
