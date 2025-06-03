@@ -148,27 +148,22 @@ class ProfileDetailView(DetailView):
     slug_url_kwarg = 'username'
 
     def get_context_data(self, **kwargs):
-    context = super().get_context_data(**kwargs)
-    profile_user = self.get_object()
+        context = super().get_context_data(**kwargs)
+        profile_user = self.get_object()
 
-    qs = profile_user.posts.select_related('category')
+        qs = profile_user.posts.select_related('category')
 
-    if self.request.user != profile_user:
-        qs = filter_published_posts(qs)
+        if self.request.user != profile_user:
+            qs = filter_published_posts(qs)
 
-    qs = (
-        qs.annotate(comment_count=Count('comments'))
-        .order_by('-pub_date')
-    )
+        qs = qs.annotate(comment_count=Count('comments')).order_by('-pub_date')
 
-    context['page_obj'] = get_paginated_page(
-        self.request, qs, settings.POSTS_PER_PAGE
-    )
-    context['is_owner'] = (
-        self.request.user.is_authenticated
-        and self.request.user == profile_user
-    )
-    return context
+        context['page_obj'] = get_paginated_page(
+            self.request, qs, settings.POSTS_PER_PAGE
+        )
+        context['is_owner'] = (self.request.user.is_authenticated
+                               and self.request.user == profile_user)
+        return context
 
 
 class EditProfileView(LoginRequiredMixin, UpdateView):
