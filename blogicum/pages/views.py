@@ -1,7 +1,5 @@
+from django.shortcuts import render
 from django.views.generic import TemplateView
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-from .forms import ProfileEditForm
 
 
 class AboutPageView(TemplateView):
@@ -12,13 +10,13 @@ class RulesPageView(TemplateView):
     template_name = 'pages/rules.html'
 
 
-@login_required
-def edit_profile(request):
-    if request.method == 'POST':
-        form = ProfileEditForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
-            return redirect('blog:profile', username=request.user.username)
-    else:
-        form = ProfileEditForm(instance=request.user)
-    return render(request, 'registration/edit_profile.html', {'form': form})
+def page_not_found(request, exception):
+    return render(request, 'pages/404.html', status=404)
+
+
+def server_error(request):
+    return render(request, 'pages/500.html', status=500)
+
+
+def csrf_failure(request, reason=''):
+    return render(request, 'pages/403csrf.html', status=403)
