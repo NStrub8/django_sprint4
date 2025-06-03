@@ -26,3 +26,10 @@ urlpatterns = [
     path('', include(('blog.urls', 'blog'), namespace='blog')),
     path('pages/', include(('pages.urls', 'pages'), namespace='pages')),
 ]
+
+# Обработчики ошибок (вне urlpatterns)
+from django.conf.urls import handler403, handler404, handler500
+
+handler403 = 'pages.views.csrf_failure'
+handler404 = 'pages.views.page_not_found'
+handler500 = 'pages.views.server_error'
