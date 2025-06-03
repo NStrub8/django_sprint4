@@ -3,17 +3,20 @@ from django.views.generic import (
     UpdateView, DeleteView
 )
 from django.shortcuts import get_object_or_404, redirect
-from .models import Post, Category, Comment
 from django.utils import timezone
 from django.conf import settings
-from .forms import PostCreateForm, CommentForm, EditProfileForm
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.core.paginator import (
+    Paginator, PageNotAnInteger, EmptyPage
+)
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from django.db.models import Count
 from django.http import Http404
+
+from .models import Post, Category, Comment
+from .forms import PostCreateForm, CommentForm, EditProfileForm
 
 
 class PostListView(ListView):
@@ -36,9 +39,9 @@ class PostDetailView(DetailView):
             if not post.is_published:
                 raise Http404("Пост не опубликован")
             if post.pub_date > timezone.now():
-                raise Http404('Пост пока что не опубликован')
+                raise Http404("Пост пока что не опубликован")
             if not post.category.is_published:
-                raise Http404('Категория поста не опубликована')
+                raise Http404("Категория поста не опубликована")
         return post
 
     def get_context_data(self, **kwargs):
@@ -79,12 +82,13 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
-        response = super().form_valid(form)
-        return response
+        return super().form_valid(form)
 
     def get_success_url(self):
-        username = self.request.user.username
-        return reverse('blog:profile', kwargs={'username': username})
+        return reverse(
+            'blog:profile',
+            kwargs={'username': self.request.user.username}
+        )
 
 
 class PostEditView(LoginRequiredMixin, UpdateView):
@@ -160,8 +164,8 @@ class ProfileDetailView(DetailView):
             self.request, qs, settings.POSTS_PER_PAGE
         )
         context['is_owner'] = (
-            self.request.user.is_authenticated
-            and self.request.user == profile_user
+            self.request.user.is_authenticated and
+            self.request.user == profile_user
         )
         return context
 
@@ -243,8 +247,9 @@ class CommentDeleteView(CommentBase, DeleteView):
         queryset = self.get_queryset()
         comment_id = self.kwargs.get('comment_id')
         post_id = self.kwargs.get('post_id')
-        obj = get_object_or_404(queryset, pk=comment_id, post__pk=post_id)
-        return obj
+        return get_object_or_404(
+            queryset, pk=comment_id, post__pk=post_id
+        )
 
 
 def filter_published_posts(queryset=None):
@@ -261,12 +266,11 @@ def get_paginated_page(request, queryset, per_page):
     paginator = Paginator(queryset, per_page)
     page = request.GET.get('page')
     try:
-        paginated_posts = paginator.page(page)
+        return paginator.page(page)
     except PageNotAnInteger:
-        paginated_posts = paginator.page(1)
+        return paginator.page(1)
     except EmptyPage:
-        paginated_posts = paginator.page(paginator.num_pages)
-    return paginated_posts
+        return paginator.page(paginator.num_pages)
 
 
 def get_annotated_posts_queryset(queryset=None):
