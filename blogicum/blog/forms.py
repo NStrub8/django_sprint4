@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+
 class PostCreateForm(forms.ModelForm):
     class Meta:
         model = Post
@@ -23,6 +24,7 @@ class CommentForm(forms.ModelForm):
         labels = {
             'text': 'Введите ваш комментарий',
         }
+
 
 class EditProfileForm(forms.ModelForm):
     class Meta:

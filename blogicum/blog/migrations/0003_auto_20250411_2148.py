@@ -12,11 +12,13 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='post',
-            options={'ordering': ('-pub_date',), 'verbose_name': 'публикация', 'verbose_name_plural': 'Публикации'},
+            options={'ordering': (
+                '-pub_date',), 'verbose_name': 'публикация', 'verbose_name_plural': 'Публикации'},
         ),
         migrations.AddField(
             model_name='post',
             name='image',
-            field=models.ImageField(blank=True, help_text='Прикрепите изображение к публикации.', null=True, upload_to='posts_image/', verbose_name='Изображение'),
+            field=models.ImageField(blank=True, help_text='Прикрепите изображение к публикации.',
+                                    null=True, upload_to='posts_image/', verbose_name='Изображение'),
         ),
     ]
