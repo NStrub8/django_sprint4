@@ -20,7 +20,7 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import include, path
-from django.conf.urls import handler403, handler404, handler500  
+from django.conf.urls import handler403, handler404, handler500
 
 handler403 = 'pages.views.csrf_failure'
 handler404 = 'pages.views.page_not_found'
@@ -37,4 +37,3 @@ urlpatterns = [
         include(('pages.urls', 'pages'), namespace='pages')
     ),
 ]
-
